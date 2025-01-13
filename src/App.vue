@@ -1,13 +1,40 @@
 <script>
-
+export default {
+  data() {
+    return {
+      city: "",
+      error: "",
+      info: null
+    };
+  },
+  computed: {
+    cityName() {
+      return "«" + this.city + "»";
+    }
+  },
+  methods: {
+    getWeather() {
+      if (this.city.trim(' ').length < 2) {
+        this.error = "The city name must be more than one character.";
+      }
+      else {
+        this.error = "";
+        axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=778185291381d0df5b47a57ad393b20a`).then(x => this.info = x);
+      }
+    }
+  }
+}
 </script>
 
 <template>
   <div class="wrap">
     <h1>Weather app</h1>
-    <h3>You can find out the weather in the city.</h3>
-    <input type="text" placeholder="Input your city" />
-    <button>Get the weather</button>
+    <h3>You can find out the weather in {{ city == "" ? "your city" : cityName }}.</h3>
+    <input type="text" placeholder="Enter your city" v-model="city" />
+    <button v-if="city != ''" @click="getWeather()">Get the weather</button>
+    <button disabled v-else>Get the weather</button>
+    <p class="err">{{ error }}</p>
+    <p v-show="info != null">{{ info }}</p>
   </div>
 </template>
 
@@ -60,7 +87,21 @@
   transition: transform 500ms ease;
 }
 
+.wrap button:disabled {
+  background: #a78a33;
+  cursor: not-allowed;
+}
+
 .wrap button:hover {
   transform: scale(1.1) translateY(-5px);
+}
+
+.wrap p {
+  font-family: Helvetica, Arial, Trebuchet, Tahoma, Verdana;
+}
+
+.wrap > .err {
+  color: red;
+  margin: 15px;
 }
 </style>
