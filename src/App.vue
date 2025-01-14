@@ -1,4 +1,5 @@
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -19,7 +20,7 @@ export default {
       }
       else {
         this.error = "";
-        axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=778185291381d0df5b47a57ad393b20a`).then(x => this.info = x);
+        axios.get(`https://wttr.in/${this.city}&format=3`).then(x => this.info = x != null ? x : "Connection proplems");
       }
     }
   }
@@ -34,7 +35,9 @@ export default {
     <button v-if="city != ''" @click="getWeather()">Get the weather</button>
     <button disabled v-else>Get the weather</button>
     <p class="err">{{ error }}</p>
-    <p v-show="info != null">{{ info }}</p>
+    <p>Info about weather in {{ city }}: </p>
+    <p v-if="info != null">{{ info }}</p>
+    <p v-else>Loading...</p>
   </div>
 </template>
 
@@ -98,10 +101,10 @@ export default {
 
 .wrap p {
   font-family: Helvetica, Arial, Trebuchet, Tahoma, Verdana;
+  margin: 15px;
 }
 
 .wrap > .err {
   color: red;
-  margin: 15px;
 }
 </style>
